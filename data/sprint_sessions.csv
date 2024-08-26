@@ -1,0 +1,4 @@
+meeting_key,session_key,circuit_key,circuit_short_name,country_key,country_name,location,gmt_offset,start_date,end_date
+1233,9672,49,Shanghai,53,China,Shanghai,08:00:00,2024-04-20T03:00:00+00:00,2024-04-20T03:30:00+00:00
+1234,9506,151,Miami,19,United States,Miami,-04:00:00,2024-05-04T16:00:00+00:00,2024-05-04T16:30:00+00:00
+1239,9549,19,Spielberg,17,Austria,Spielberg,02:00:00,2024-06-29T10:00:00+00:00,2024-06-29T10:30:00+00:00
