@@ -7,12 +7,9 @@ from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from llama_index.core.agent import ReActAgent
 from llama_index.llms.openai import OpenAI
 from plot import plot_engine
-from csv_generator import baseurl
 import requests
 from llama_index.core.tools import FunctionTool
-from pdf import engines
-
-load_dotenv()
+from pdf import create_lewis_engine
 
 drivers_path = os.path.join("data", "drivers.csv")
 drivers_df = pd.read_csv(drivers_path)
@@ -153,4 +150,13 @@ tools = [
     
 ]
 
-tools.extend(engines)
+
+
+#TODO Figure out a way to add the engines including their metadata
+
+# base_path = "data"
+# folders = ["drivers"]
+
+# engines = create_engines(base_path, folders)
+
+# tools.extend(engines)
