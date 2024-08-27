@@ -32,8 +32,4 @@ def create_engines(base_path, folders):
                 print(f"Error processing {pdf_file}: {e}")
     return engines
 
-base_path = "data"
-folders = ["constructors", "drivers", "grand_prix"]
-
-engines = create_engines(base_path, folders)
-print("All engines are ready.")
+    
