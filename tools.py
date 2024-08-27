@@ -153,4 +153,4 @@ tools = [
     
 ]
 
-t
+tools.extend(engines)
