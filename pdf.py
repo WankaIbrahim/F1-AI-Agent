@@ -7,10 +7,10 @@ def get_index(data, index_name):
     if not os.path.exists(index_name):
         print(f"Building index for {index_name}...")
         index = VectorStoreIndex.from_documents(data, show_progress=True)
-        index.storage_context.persist(persist_dir=index_name)
+        index.storage_context.persist(persist_dir=os.path.join("indexes", index_name))
     else:
         print(f"Loading existing index for {index_name}...")
-        index = load_index_from_storage(StorageContext.from_defaults(persist_dir=index_name))
+        index = load_index_from_storage(StorageContext.from_defaults(persist_dir=os.path.join("indexes", index_name)))
     return index
 
 def create_engines(base_path, folders):
