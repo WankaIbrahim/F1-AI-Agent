@@ -9,7 +9,7 @@ from llama_index.llms.openai import OpenAI
 from plot import plot_engine
 import requests
 from llama_index.core.tools import FunctionTool
-from pdf import create_lewis_engine
+from pdf import create_engines
 
 drivers_path = os.path.join("data", "drivers.csv")
 drivers_df = pd.read_csv(drivers_path)
@@ -151,12 +151,17 @@ tools = [
 ]
 
 
+base_path = "data"
+folders = ["constructors", "drivers", "grand_prix"]
 
-#TODO Figure out a way to add the engines including their metadata
-
-# base_path = "data"
-# folders = ["drivers"]
-
-# engines = create_engines(base_path, folders)
-
-# tools.extend(engines)
+engines = create_engines(base_path, folders)
+query_engine_tools = []
+for name, engine in engines.items():
+    query_engine_tools.append(QueryEngineTool(
+        query_engine=engine,
+        metadata=ToolMetadata(
+            name=name,
+            description="This tool gives information regarding {name}"
+        )
+    ))
+tools.extend(query_engine_tools)
