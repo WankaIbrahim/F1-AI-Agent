@@ -11,6 +11,9 @@ import requests
 from llama_index.core.tools import FunctionTool
 from pdf import create_engines
 
+load_dotenv()
+
+
 drivers_path = os.path.join("data", "drivers.csv")
 drivers_df = pd.read_csv(drivers_path)
 
@@ -72,8 +75,7 @@ sprint_sessions_qe = PandasQueryEngine(
 )
 sprint_sessions_qe.update_prompts({"pandas_prompt": new_prompt})
 
-###############################################################
-
+#########################################################################################################################################################################################
 def get_position(session_key, driver_number):
     baseurl = "https://api.openf1.org/v1/position?session_key="
     session_key = str(session_key)
@@ -106,7 +108,7 @@ position_engine = FunctionTool.from_defaults(
 )
 
 
-###############################################################
+#########################################################################################################################################################################################
 
 tools = [
     QueryEngineTool(query_engine=drivers_qe,
@@ -150,11 +152,7 @@ tools = [
     
 ]
 
-
-base_path = "data"
-folders = ["constructors", "drivers", "grand_prix"]
-
-engines = create_engines(base_path, folders)
+engines = create_engines()
 query_engine_tools = []
 for name, engine in engines.items():
     query_engine_tools.append(QueryEngineTool(
