@@ -1,0 +1,2 @@
+QUERY: What position did lewis hamilton finish the silverstone grand prix
+ANSWER: Lewis Hamilton finished in 1st position at the Silverstone Grand Prix.

@@ -1,0 +1,21 @@
+first_name,last_name,driver_number,country_code,team_name
+Max,Verstappen,1,NED,Red Bull Racing
+Logan,Sargeant,2,USA,Williams
+Daniel,Ricciardo,3,AUS,RB
+Lando,Norris,4,GBR,McLaren
+Pierre,Gasly,10,FRA,Alpine
+Sergio,Perez,11,MEX,Red Bull Racing
+Fernando,Alonso,14,ESP,Aston Martin
+Charles,Leclerc,16,MON,Ferrari
+Lance,Stroll,18,CAN,Aston Martin
+Kevin,Magnussen,20,DEN,Haas F1 Team
+Yuki,Tsunoda,22,JPN,RB
+Alexander,Albon,23,THA,Williams
+Guanyu,Zhou,24,CHN,Kick Sauber
+Nico,Hulkenberg,27,GER,Haas F1 Team
+Esteban,Ocon,31,FRA,Alpine
+Lewis,Hamilton,44,GBR,Mercedes
+Carlos,Sainz,55,ESP,Ferrari
+George,Russell,63,GBR,Mercedes
+Valtteri,Bottas,77,FIN,Kick Sauber
+Oscar,Piastri,81,AUS,McLaren

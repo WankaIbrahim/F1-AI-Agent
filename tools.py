@@ -1,81 +1,73 @@
 from dotenv import load_dotenv
 import os
 import pandas as pd
-from prompts import new_prompt, instruction_str, context
-from llama_index.experimental.query_engine import PandasQueryEngine
-from llama_index.core.tools import QueryEngineTool, ToolMetadata
-from llama_index.core.agent import ReActAgent
-from llama_index.llms.openai import OpenAI
-from plot import plot_engine
 import requests
 from llama_index.core.tools import FunctionTool
-from pdf import create_engines
+from pdf_engines import create_pdf_engines
+from csv_engines import create_csv_engines
+from pathlib import Path
+from datetime import date
+import shutil
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.dates as mdates
 
 load_dotenv()
 
 
-drivers_path = os.path.join("data", "drivers.csv")
-drivers_df = pd.read_csv(drivers_path)
+temp_file_path = os.path.join("data", "chat_history.txt")
+saved_file_path = os.path.join("data", "saved_chat_history", date.today().strftime("%m/%d/%Y,%H-%M-%S")+"_chat_history.txt")
+chat_history_path = Path("data", "chat_history.txt")
 
-meetings_path = os.path.join("data", "meetings.csv")
-meetings_df = pd.read_csv(meetings_path)
-
-practice_sessions_path = os.path.join("data", "practice_sessions.csv")
-practice_sessions_df = pd.read_csv(practice_sessions_path)
-
-qualifying_sessions_path = os.path.join("data", "qualifying_sessions.csv")
-qualifying_sessions_df = pd.read_csv(qualifying_sessions_path)
-
-race_sessions_path = os.path.join("data", "race_sessions.csv")
-race_sessions_df = pd.read_csv(race_sessions_path)
-
-sprint_sessions_path = os.path.join("data", "sprint_sessions.csv")
-sprint_sessions_df = pd.read_csv(sprint_sessions_path)
+if chat_history_path.is_file():
+    os.remove(chat_history_path)
+open(chat_history_path, "x")
 
 
-drivers_qe = PandasQueryEngine(
-    df=drivers_df,
-    verbose=True,
-    instruction_str=instruction_str
-)
-drivers_qe.update_prompts({"pandas_prompt": new_prompt})
+def plot_driver_progress(session_key, driver_number):
+    baseurl = "https://api.openf1.org/v1/position?session_key="
+    session_key = str(session_key)
+    driver_number = str(driver_number)
+    position_data = requests.get(f"{baseurl}{session_key}&driver_number={driver_number}").json()
+    
+    position_list = []
+    
+    for position in position_data:
+        position_information = {
+            'date': pd.to_datetime(position['date']),
+            'position': position['position'],
+            'driver_number': position['driver_number'],
+            }
+        position_list.append(position_information)
+    
+    df = pd.DataFrame(position_list)    
+    
+    df.set_index('date', inplace = True)      
+     
+    df = df.resample('min').bfill()
+   
+    plt.figure(figsize=(80,40))
+    
+    plt.plot(
+        df.index,
+        df["position"],
+        label = f"Driver: {driver_number}",
+        color = '#1f77b4'
+    )
+    
+    plt.xlabel("Time")
+    plt.ylabel("Position")
+    plt.yticks(np.arange(1, 21, step=1))
+    plt.ylim(0, 21)
+    plt.gca().invert_yaxis()
+    plt.title("Driver Position Over Time")
+    plt.legend()
+    plt.grid(True)
+    plt.show()    
 
-meetings_qe = PandasQueryEngine(
-    df=meetings_df,
-    verbose=True,
-    instruction_str=instruction_str
-)
-meetings_qe.update_prompts({"pandas_prompt": new_prompt})
+    print(f"Graph plotted successfully")
+    return
 
-practice_sessions_qe = PandasQueryEngine(
-    df=practice_sessions_df,
-    verbose=True,
-    instruction_str=instruction_str
-)
-practice_sessions_qe.update_prompts({"pandas_prompt": new_prompt})
-
-qualifying_sessions_qe = PandasQueryEngine(
-    df=qualifying_sessions_df,
-    verbose=True,
-    instruction_str=instruction_str
-)
-qualifying_sessions_qe.update_prompts({"pandas_prompt": new_prompt})
-
-race_sessions_qe = PandasQueryEngine(
-    df=race_sessions_df,
-    verbose=True,
-    instruction_str=instruction_str
-)
-race_sessions_qe.update_prompts({"pandas_prompt": new_prompt})
-
-sprint_sessions_qe = PandasQueryEngine(
-    df=sprint_sessions_df,
-    verbose=True,
-    instruction_str=instruction_str
-)
-sprint_sessions_qe.update_prompts({"pandas_prompt": new_prompt})
-
-#########################################################################################################################################################################################
 def get_position(session_key, driver_number):
     baseurl = "https://api.openf1.org/v1/position?session_key="
     session_key = str(session_key)
@@ -97,9 +89,23 @@ def get_position(session_key, driver_number):
     df.set_index('date', inplace = True)      
      
     df = df.resample('min').bfill()
-    return df.iloc[-1]
-    
-    
+    return df.iloc[-1]   
+
+def save_chat_history():
+    with open(temp_file_path, "r") as chat_history:
+        shutil.copy(temp_file_path, saved_file_path) 
+        print(f"Chat history saved. File path is {saved_file_path}")
+
+def update_chat_history(msg):
+    with open(temp_file_path, "a") as chat_history:
+        chat_history.write(msg+"\n")
+
+
+plot_engine = FunctionTool.from_defaults(
+    fn=plot_driver_progress,
+    name="driver_progress_plotter",
+    description="this tool can create a graph of position against time for a specific driver in a specific session using a RACE session key which is an int and the drivers number which is also an int",
+)
 
 position_engine = FunctionTool.from_defaults(
     fn=get_position,
@@ -107,59 +113,17 @@ position_engine = FunctionTool.from_defaults(
     description="this tool can get the finishing postion for a specific driver in a specific session using the session key which is an int and the drivers number which is also an int",
 )
 
+save_chat_history_engine = FunctionTool.from_defaults(
+    fn=save_chat_history,
+    name="save_chat_history",
+    description="this tool can save the chat history between the user and the AI",
+)
 
-#########################################################################################################################################################################################
 
 tools = [
-    QueryEngineTool(query_engine=drivers_qe,
-                    metadata=ToolMetadata(
-                        name="drivers_data",
-                        description="This gives information about the 20 formula 1 drivers"
-                    ),
-    ),
-    QueryEngineTool(query_engine=meetings_qe,
-                    metadata=ToolMetadata(
-                        name="meetings_data",
-                        description="This gives information about the 2024 Formula 1 meetings that have taken place."
-                    ),
-    ),
-    QueryEngineTool(query_engine=practice_sessions_qe,
-                    metadata=ToolMetadata(
-                        name="practice_sessions_data",
-                        description="This gives information about all the practice sessions that have taken place"
-                    ),
-    ),
-    QueryEngineTool(query_engine=qualifying_sessions_qe,
-                    metadata=ToolMetadata(
-                        name="qualifying_sessions_data",
-                        description="This gives information about all the qualifying sessions that have taken place"
-                    ),
-    ),
-    QueryEngineTool(query_engine=race_sessions_qe,
-                    metadata=ToolMetadata(
-                        name="race_sessions_data",
-                        description="This gives information about all the race sessions that have taken place"
-                    ),
-    ),
-    QueryEngineTool(query_engine=sprint_sessions_qe,
-                    metadata=ToolMetadata(
-                        name="sprint_sessions_data",
-                        description="This gives information about all the sprint sessions that have taken place"
-                    ),
-    ),
     plot_engine,
     position_engine,
-    
+    save_chat_history_engine,    
 ]
-
-engines = create_engines()
-query_engine_tools = []
-for name, engine in engines.items():
-    query_engine_tools.append(QueryEngineTool(
-        query_engine=engine,
-        metadata=ToolMetadata(
-            name=name,
-            description="This tool gives information regarding {name}"
-        )
-    ))
-tools.extend(query_engine_tools)
+tools.extend(create_csv_engines())
+tools.extend(create_pdf_engines())

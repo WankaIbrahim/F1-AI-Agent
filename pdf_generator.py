@@ -27,6 +27,4 @@ def download_pdf_files():
             for chunk in response.iter_content(chunk_size=4096):
                 if chunk:
                     pdf_file.write(chunk)
-
-
-download_pdf_files()
+        print(file_name + " has been downloaded.")
