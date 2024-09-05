@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import os
 import pandas as pd
 import requests
@@ -6,17 +5,15 @@ from llama_index.core.tools import FunctionTool
 from pdf_engines import create_pdf_engines
 from csv_engines import create_csv_engines
 from pathlib import Path
-from datetime import date
+from datetime import datetime
 import shutil
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.dates as mdates
 
-load_dotenv()
-
 
 temp_file_path = os.path.join("data", "chat_history.txt")
-saved_file_path = os.path.join("data", "saved_chat_history", date.today().strftime("%m/%d/%Y,%H-%M-%S")+"_chat_history.txt")
+saved_file_path = os.path.join("data", "saved_chat_history", datetime.now().strftime("%m-%d-%Y, %H-%M-%S")+"_chat_history.txt")
 chat_history_path = Path("data", "chat_history.txt")
 
 if chat_history_path.is_file():

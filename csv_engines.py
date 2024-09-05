@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 import os
 import pandas as pd
 from prompts import new_prompt, instruction_str, context
@@ -6,8 +5,6 @@ from llama_index.experimental.query_engine import PandasQueryEngine
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from csv_generator import generate_csv_files, baseurl
 generate_csv_files(baseurl)
-
-load_dotenv()
 
 
 def create_csv_engines():
