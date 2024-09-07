@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from botocore.exceptions import ClientError
 from prompts import context
 from llama_index.core.agent import ReActAgent
-import openai
+from llama_index.llms.openai import OpenAI
 
 load_dotenv()
 
@@ -35,7 +35,7 @@ os.environ["OPENAI_API_KEY"] = get_secret()
 
 from tools import tools, update_chat_history
 
-llm = openai(model="gpt-4o")
+llm = OpenAI(model="gpt-4o")
 agent = ReActAgent.from_tools(tools=tools,
                               llm=llm,
                               verbose=True,
