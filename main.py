@@ -10,8 +10,6 @@ import openai
 load_dotenv()
 
 def get_secret():
-
-
     secret_name = "OPENAI_API_KEY"
     region_name = "eu-north-1"
 
@@ -33,15 +31,11 @@ def get_secret():
 
     secret = get_secret_value_response['SecretString'].strip()      
     return secret
-OPENAI_API_KEY = get_secret()
-print(OPENAI_API_KEY)
+os.environ["OPENAI_API_KEY"] = get_secret()
 
 from tools import tools, update_chat_history
 
-
-llm = openai(model="gpt-4o",
-             api_key=OPENAI_API_KEY)
-
+llm = openai(model="gpt-4o")
 agent = ReActAgent.from_tools(tools=tools,
                               llm=llm,
                               verbose=True,
