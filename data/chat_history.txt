@@ -1,2 +1,0 @@
-QUERY: How old is lewis hamilto
-ANSWER: Lewis Hamilton was born on January 7, 1985. As of today, he is 38 years old.
