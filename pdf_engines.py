@@ -12,7 +12,7 @@ from llama_index.core.tools import QueryEngineTool, ToolMetadata
 
 def get_index(data, index_name):
     index = None
-    if not os.path.exists(index_name):
+    if not os.path.exists(os.path.join("data", "indexes", index_name)):
         print(f"Building index for {index_name}...")
         index = VectorStoreIndex.from_documents(data, show_progress=True)
         index.storage_context.persist(persist_dir=os.path.join("data", "indexes", index_name))
