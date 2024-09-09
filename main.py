@@ -33,7 +33,7 @@ def get_secret():
     return secret
 os.environ["OPENAI_API_KEY"] = get_secret()
 
-from tools import tools, update_chat_history
+from tools import tools
 
 llm = OpenAI(model="gpt-4o")
 agent = ReActAgent.from_tools(tools=tools,
@@ -41,11 +41,11 @@ agent = ReActAgent.from_tools(tools=tools,
                               verbose=True,
                               context=context)
 
-while (prompt := input("Enter a prompt (q to quit):  ")) != "q":
-    try:
-        result = agent.query(prompt)
-        update_chat_history("QUERY: "+ prompt)
-        update_chat_history("ANSWER: " + str(result))
-        print(result)
-    except Exception as e:
-        print(f"Error: {e}")
+# while (prompt := input("Enter a prompt (q to quit):  ")) != "q":
+#     try:
+#         result = agent.query(prompt)
+#         update_chat_history("QUERY: "+ prompt)
+#         update_chat_history("ANSWER: " + str(result))
+#         print(result)
+#     except Exception as e:
+#         print(f"Error: {e}")

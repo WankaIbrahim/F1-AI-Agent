@@ -20,11 +20,11 @@ def download_pdf_files():
         pdf_file_path = line + ".pdf"
         file_name = line.replace(" ", "_")
 
-
-        response = requests.get(baseurl + file_name, stream=True)
-        
-        with open(os.path.join("data", "wiki_files", pdf_file_path), "wb") as pdf_file:
-            for chunk in response.iter_content(chunk_size=4096):
-                if chunk:
-                    pdf_file.write(chunk)
-        print(file_name + " has been downloaded.")
+        if not os.path.exists(os.path.join("data", "wiki_files", pdf_file_path)):
+            response = requests.get(baseurl + file_name, stream=True)
+            
+            with open(os.path.join("data", "wiki_files", pdf_file_path), "wb") as pdf_file:
+                for chunk in response.iter_content(chunk_size=4096):
+                    if chunk:
+                        pdf_file.write(chunk)
+            print(file_name + " has been downloaded.")

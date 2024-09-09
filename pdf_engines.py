@@ -4,11 +4,7 @@ from llama_index.readers.file import PDFReader
 from pdf_generator import download_pdf_files
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 
-#Download all the WIkI pdf files.
-#Stays commented because it take a while to download them all
-#TODO FInd a way to not have to comment the function.
-
-#download_pdf_files()
+download_pdf_files()
 
 def get_index(data, index_name):
     index = None
