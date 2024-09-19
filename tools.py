@@ -62,8 +62,7 @@ def plot_driver_progress(session_key, driver_number):
     plt.grid(True)
     plt.show()    
 
-    print(f"Graph plotted successfully")
-    return
+    return plt
 
 def get_position(session_key, driver_number):
     baseurl = "https://api.openf1.org/v1/position?session_key="
