@@ -48,15 +48,19 @@ def get_secret():
 
     create_chat_window()
 
+def load_tools():
+    global tools, update_chat_history
+    from tools import tools, update_chat_history
+
 def login():
     global agent, update_chat_history
-
-    # os.environ["AWS_ACCESS_KEY_ID"] = access_key_variable.get()
-    # os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key_variable.get()
-    
+    os.environ["AWS_ACCESS_KEY_ID"] = access_key_variable.get()
+    os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key_variable.get()
     os.environ["OPENAI_API_KEY"] = get_secret()
     
-    from tools import tools, update_chat_history
+    thread = Thread(target=load_tools)
+    thread.start()
+    thread.join()
     
     llm = OpenAI(model="gpt-4o")
     agent = ReActAgent.from_tools(
@@ -65,15 +69,14 @@ def login():
         verbose=True,
         context=context
     )
-    login_window.destroy()
-    create_chat_window()
+    start_button = ttk.Button(master=login_window, text='START', command=create_chat_window)
+    start_button.pack(side="bottom" ,pady=500)
 
 def query():
     prompt = str(prompt_entry.get())
-    result = str(agent.query(prompt))
-    update_chat_history("QUERY: "+ prompt_entry.get())
+    result = str(agent.query(prompt))    
     update_chat_history("ANSWER: " + result)
-
+    update_chat_history("QUERY: "+ prompt)
     result_label["text"] = result
 
 def create_login_window():
@@ -113,7 +116,8 @@ def create_login_window():
 
 def create_chat_window():
     global prompt_entry, result_label
-
+    
+    login_window.destroy()
     chat_window = ttk.Window(themename="flatly")
     chat_window.title('F1 Chatbot')
     chat_window.geometry('2880x1800')
