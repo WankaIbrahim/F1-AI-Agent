@@ -8,7 +8,9 @@ from prompts import context
 from llama_index.core.agent import ReActAgent
 from llama_index.llms.openai import OpenAI
 import os
-import math
+import time
+from threading import Thread
+
 
 load_dotenv()
 
@@ -35,46 +37,51 @@ def get_secret():
     return secret
 
 
-def create_agent():
     global agent, update_chat_history
-    os.environ["OPENAI_API_KEY"] = get_secret()
+    from tools import agent, update_chat_history
 
-    # loading_label = ttk.Label(master=login_window, text='Loading...', font='Times 18')
-    # loading_label.pack(pady=10)
-
-    from tools import tools, update_chat_history
-
-    llm = OpenAI(model="gpt-4o")
-    agent = ReActAgent.from_tools(tools=tools,
+    llm = OpenAI(model="gpt-3.5-turbo")
+    agent = ReActAgent.from_tools(tools=agent,
                                 llm=llm,
                                 verbose=True,
                                 context=context)
 
+    create_chat_window()
 
-def query(event=None):
-    prompt = prompt_variable.get()
-    result = agent.query(prompt)
-    update_chat_history("QUERY: "+ prompt)
-    update_chat_history("ANSWER: " + str(result))
-    result_variable.set(result)
+def login():
+    global agent, update_chat_history
 
-
-def login(event=None):
-    os.environ["AWS_ACCESS_KEY_ID"] = access_key_variable.get()
-    os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key_variable.get()
-
-    agent = create_agent()    
-
+    # os.environ["AWS_ACCESS_KEY_ID"] = access_key_variable.get()
+    # os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key_variable.get()
+    
+    os.environ["OPENAI_API_KEY"] = get_secret()
+    
+    from tools import tools, update_chat_history
+    
+    llm = OpenAI(model="gpt-4o")
+    agent = ReActAgent.from_tools(
+        llm=llm,
+        tools=tools,
+        verbose=True,
+        context=context
+    )
     login_window.destroy()
-    create_chat_page()    
+    create_chat_window()
 
+def query():
+    prompt = str(prompt_entry.get())
+    result = str(agent.query(prompt))
+    update_chat_history("QUERY: "+ prompt_entry.get())
+    update_chat_history("ANSWER: " + result)
 
-def create_login_page():
+    result_label["text"] = result
+
+def create_login_window():
     global login_window, access_key_variable, secret_key_variable, error_label
 
     login_window = ttk.Window(themename='flatly')
     login_window.title('F1 Chatbot')
-    login_window.geometry('800x400')
+    login_window.geometry('2880x1800')
 
     title_label = ttk.Label(master=login_window, text="Welcome to F1 Chatbot", font='Times 24')
     title_label.pack(pady=20)
@@ -89,7 +96,6 @@ def create_login_page():
     access_key_entry = ttk.Entry(master=access_key_frame, textvariable=access_key_variable, width=50)
     access_key_entry.pack(side = 'left', padx=5)
     access_key_frame.pack(pady=5)
-    access_key_entry.bind('<Return>', login)
 
     secret_key_frame = ttk.Frame(master=login_window)
     secret_key_variable = ttk.StringVar()
@@ -98,44 +104,34 @@ def create_login_page():
     secret_key_entry = ttk.Entry(master=secret_key_frame, textvariable=secret_key_variable, width=50)
     secret_key_entry.pack(side = 'left', padx=5)
     secret_key_frame.pack(pady=5)
-    secret_key_entry.bind('<Return>', login)
 
 
     login_button = ttk.Button(master=login_window, text='Login', command=login)
     login_button.pack(pady=20)
 
     login_window.mainloop()
-    
 
-def create_chat_page():
-    global prompt_variable, result_variable
+def create_chat_window():
+    global prompt_entry, result_label
 
-    chat_window = ttk.Window(themename='flatly')
+    chat_window = ttk.Window(themename="flatly")
     chat_window.title('F1 Chatbot')
-    chat_window.geometry('800x400')
+    chat_window.geometry('2880x1800')
 
-    title_label = ttk.Label(master = chat_window, text = "F1 Chatbot", font = 'Times 24')
-    title_label.pack()
 
-    input_frame = ttk.Frame(master=chat_window)
-    prompt_variable = tk.StringVar()
-    prompt_entry = ttk.Entry(master = input_frame, textvariable = prompt_variable, width = 100)
-    submit_button = ttk.Button(master = input_frame, text = 'Submit', command = query)
-    prompt_entry.bind('<Return>', query)
+    title_label = ttk.Label(master = chat_window, text = "F1 Chatbot", font = 'Times 36', background='#ffffff')
+    title_label.pack(pady=100)
+
+    prompt_frame = ttk.Frame(master=chat_window)
+    prompt_entry = ttk.Entry(master=prompt_frame, width=100)
+    submit_button = ttk.Button(master=prompt_frame, text="Submit", command=query)
 
     prompt_entry.pack(side = 'left', padx = 10)
-    submit_button.pack(side = 'left')
-    input_frame.pack(pady=10)
+    submit_button.pack(side = 'left', padx=10)
+    prompt_frame.pack(pady=10)
 
-    result_variable = tk.StringVar()
+    result_label = ttk.Label(master=chat_window, font='Calibri 16', background='#ffffff')    
+    result_label.pack(pady=50)
 
-    canvas = tk.Canvas(master=chat_window, width=780, height=200, bg='#f0f0f0', highlightthickness=0)
-    canvas.create_rectangle(10, 10, 770, 190, outline='#cccccc', width=2, fill='#ffffff')
-
-    result_label = ttk.Label(master=canvas, textvariable=result_variable, font='Calibri 16', background='#ffffff')    
-    canvas.create_window(200, 100, window=result_label)
-    canvas.pack(pady=20)
-
-    chat_window.mainloop()
-
-create_login_page()
+if __name__ == "__main__":
+    create_login_window()
