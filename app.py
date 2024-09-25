@@ -14,7 +14,7 @@ from threading import Thread
 
 load_dotenv()
 
-def get_secret():
+def get_secret():            
     secret_name = "OPENAI_API_KEY"
     region_name = "eu-north-1"
 
@@ -27,26 +27,12 @@ def get_secret():
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
         )
+        
     except ClientError as e:
-        if(not error_label.winfo_ismapped()):
-            error_label.pack(pady=10)
         raise e
     
-    error_label.destroy()
     secret = get_secret_value_response['SecretString'].strip()      
     return secret
-
-
-    global agent, update_chat_history
-    from tools import agent, update_chat_history
-
-    llm = OpenAI(model="gpt-3.5-turbo")
-    agent = ReActAgent.from_tools(tools=agent,
-                                llm=llm,
-                                verbose=True,
-                                context=context)
-
-    create_chat_window()
 
 def load_tools():
     global tools, update_chat_history
@@ -57,7 +43,7 @@ def login():
     os.environ["AWS_ACCESS_KEY_ID"] = access_key_variable.get()
     os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key_variable.get()
     os.environ["OPENAI_API_KEY"] = get_secret()
-    
+
     thread = Thread(target=load_tools)
     thread.start()
     thread.join()
@@ -68,9 +54,10 @@ def login():
         tools=tools,
         verbose=True,
         context=context
-    )
+    )    
+    
     start_button = ttk.Button(master=login_window, text='START', command=create_chat_window)
-    start_button.pack(side="bottom" ,pady=500)
+    start_button.pack(side="bottom" ,pady=200)
 
 def query():
     prompt = str(prompt_entry.get())
@@ -80,7 +67,7 @@ def query():
     result_label["text"] = result
 
 def create_login_window():
-    global login_window, access_key_variable, secret_key_variable, error_label
+    global login_window, access_key_variable, secret_key_variable, info_label
 
     login_window = ttk.Window(themename='flatly')
     login_window.title('F1 Chatbot')
@@ -89,7 +76,7 @@ def create_login_window():
     title_label = ttk.Label(master=login_window, text="Welcome to F1 Chatbot", font='Times 24')
     title_label.pack(pady=20)
 
-    error_label = ttk.Label(master=login_window, text='Invalid Credentials', font='Times 18', foreground='red')
+    info_label = ttk.Label(master=login_window, text='Invalid Credentials', font='Times 18', foreground='red')
 
 
     access_key_frame = ttk.Frame(master=login_window)
@@ -121,7 +108,6 @@ def create_chat_window():
     chat_window = ttk.Window(themename="flatly")
     chat_window.title('F1 Chatbot')
     chat_window.geometry('2880x1800')
-
 
     title_label = ttk.Label(master = chat_window, text = "F1 Chatbot", font = 'Times 36', background='#ffffff')
     title_label.pack(pady=100)
