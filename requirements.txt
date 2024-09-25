@@ -1,0 +1,13 @@
+tkinter
+ttkbootstrap
+python-dotenv
+pandas
+boto3
+botocore
+llama-index
+openai
+requests
+pathlib
+shutil
+matplotlib
+numpy
