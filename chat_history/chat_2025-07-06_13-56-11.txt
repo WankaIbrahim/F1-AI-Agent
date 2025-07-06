@@ -1,0 +1,2 @@
+QUERY: What position did george finish the british grand prix
+ANSWER: George Russell finished in P5 at the British Grand Prix.

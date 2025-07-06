@@ -1,18 +1,12 @@
-import tkinter as tk
-import ttkbootstrap as ttk
+import os
 from dotenv import load_dotenv
-import pandas as pd
 import boto3
+import datetime
 from botocore.exceptions import ClientError
 from prompts import context
 from llama_index.core.agent import ReActAgent
 from llama_index.llms.openai import OpenAI
-import os
-import time
-from threading import Thread
-
-
-load_dotenv()
+from llama_index.core.tools import RetrieverTool
 
 def get_secret():            
     secret_name = "OPENAI_API_KEY"
@@ -27,7 +21,6 @@ def get_secret():
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
         )
-        
     except ClientError as e:
         raise e
     
@@ -35,93 +28,53 @@ def get_secret():
     return secret
 
 def load_tools():
-    global tools, update_chat_history
-    from tools import tools, update_chat_history
+    global tools
+    from tools import tools
 
 def login():
-    global agent, update_chat_history
-    os.environ["AWS_ACCESS_KEY_ID"] = access_key_variable.get()
-    os.environ["AWS_SECRET_ACCESS_KEY"] = secret_key_variable.get()
+    global agent, tools
+    os.environ["AWS_ACCESS_KEY_ID"] = "AKIAYZZGSWXPTI5RURU6"
+    os.environ["AWS_SECRET_ACCESS_KEY"] = "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"
     os.environ["OPENAI_API_KEY"] = get_secret()
 
-    thread = Thread(target=load_tools)
-    thread.start()
-    thread.join()
+    load_tools()
     
-    llm = OpenAI(model="gpt-4o")
+    llm = OpenAI(model="o4-mini")
     agent = ReActAgent.from_tools(
         llm=llm,
         tools=tools,
         verbose=True,
-        context=context
-    )    
-    
-    start_button = ttk.Button(master=login_window, text='START', command=create_chat_window)
-    start_button.pack(side="bottom" ,pady=200)
+        context=context,
+    )       
+    return agent
 
-def query():
-    prompt = str(prompt_entry.get())
-    result = str(agent.query(prompt))    
-    update_chat_history("ANSWER: " + result)
-    update_chat_history("QUERY: "+ prompt)
-    result_label["text"] = result
+def main():
+    print("Welcome to the F1 Chatbot!")
+    print("Type your questions and press Enter.")
+    print("Type 'exit' or 'quit' to end the session.\n")
 
-def create_login_window():
-    global login_window, access_key_variable, secret_key_variable, info_label
+    agent = login()
 
-    login_window = ttk.Window(themename='flatly')
-    login_window.title('F1 Chatbot')
-    login_window.geometry('2880x1800')
+    start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    history_file = f"chat_{start_time}.txt"
 
-    title_label = ttk.Label(master=login_window, text="Welcome to F1 Chatbot", font='Times 24')
-    title_label.pack(pady=20)
+    def update_chat_history(text: str):
+        with open(os.path.join("chat_history",history_file), "a", encoding="utf-8") as f:
+            f.write(text + "\n")
 
-    info_label = ttk.Label(master=login_window, text='Invalid Credentials', font='Times 18', foreground='red')
+        
+    while True:
+        prompt = input("You: ").strip()
+        if prompt.lower() in ('exit', 'quit'):
+            print("Goodbye!")
+            break
 
+        response = agent.query(prompt)
+        print(f"Agent: {response}")
 
-    access_key_frame = ttk.Frame(master=login_window)
-    access_key_variable = ttk.StringVar()
-    access_key_label = ttk.Label(master=access_key_frame, text="AWS ACCESS KEY ID", font='Calibri 12')
-    access_key_label.pack(side = 'left', padx=5)
-    access_key_entry = ttk.Entry(master=access_key_frame, textvariable=access_key_variable, width=50)
-    access_key_entry.pack(side = 'left', padx=5)
-    access_key_frame.pack(pady=5)
-
-    secret_key_frame = ttk.Frame(master=login_window)
-    secret_key_variable = ttk.StringVar()
-    secret_key_label = ttk.Label(master=secret_key_frame, text="AWS SECRET ACCESS KEY ID", font='Calibri 12')
-    secret_key_label.pack(side = 'left', padx=5)
-    secret_key_entry = ttk.Entry(master=secret_key_frame, textvariable=secret_key_variable, width=50)
-    secret_key_entry.pack(side = 'left', padx=5)
-    secret_key_frame.pack(pady=5)
-
-
-    login_button = ttk.Button(master=login_window, text='Login', command=login)
-    login_button.pack(pady=20)
-
-    login_window.mainloop()
-
-def create_chat_window():
-    global prompt_entry, result_label
-    
-    login_window.destroy()
-    chat_window = ttk.Window(themename="flatly")
-    chat_window.title('F1 Chatbot')
-    chat_window.geometry('2880x1800')
-
-    title_label = ttk.Label(master = chat_window, text = "F1 Chatbot", font = 'Times 36', background='#ffffff')
-    title_label.pack(pady=100)
-
-    prompt_frame = ttk.Frame(master=chat_window)
-    prompt_entry = ttk.Entry(master=prompt_frame, width=100)
-    submit_button = ttk.Button(master=prompt_frame, text="Submit", command=query)
-
-    prompt_entry.pack(side = 'left', padx = 10)
-    submit_button.pack(side = 'left', padx=10)
-    prompt_frame.pack(pady=10)
-
-    result_label = ttk.Label(master=chat_window, font='Calibri 16', background='#ffffff')    
-    result_label.pack(pady=50)
+        update_chat_history(f"QUERY: {prompt}")
+        update_chat_history(f"ANSWER: {response}")
 
 if __name__ == "__main__":
-    create_login_window()
+    load_dotenv()
+    main()

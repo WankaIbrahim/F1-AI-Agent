@@ -55,13 +55,9 @@ def get_sprint_sessions(baseurl):
     
     session_dataframe = pd.DataFrame(session_list)
     session_dataframe.to_csv(os.path.join('data', 'csv_files', 'sprint_sessions.csv'), index=False)
-    
 
     
 def generate_csv_files(baseurl):
     get_drivers(baseurl)
     get_race_sessions(baseurl)
     get_sprint_sessions(baseurl)
-
-
-

@@ -1,40 +1,36 @@
 import os
 import pandas as pd
-from prompts import new_prompt, instruction_str, context
+from prompts import INSTRUCTIONS_BY_NAME, PROMPTS_BY_NAME
 from llama_index.experimental.query_engine import PandasQueryEngine
 from llama_index.core.tools import QueryEngineTool, ToolMetadata
 from csv_generator import generate_csv_files, baseurl
-generate_csv_files(baseurl)
 
+
+generate_csv_files(baseurl)
 
 def create_csv_engines():
     folder_path = os.path.join("data", "csv_files")
-    csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
-    query_engine_tools = []
+    csv_files = [f for f in os.listdir(folder_path) if f.endswith(".csv")]
+    tools = []
 
-    for csv_file in csv_files:
-        csv_path = os.path.join(folder_path, csv_file)
-        csv_df = pd.read_csv(csv_path)
-        name = csv_file.replace(".csv", "")
-        description = f"This tool provides information about all the {csv_file.replace(".csv", "")}."
+    for file in csv_files:
+        name = file.replace(".csv", "")
+        df = pd.read_csv(os.path.join(folder_path, file))
 
-
-        csv_query_engine = PandasQueryEngine(
-            df=csv_df,
+        engine = PandasQueryEngine(
+            df=df,
             verbose=True,
-            instruction_str=instruction_str
+            instruction_str=INSTRUCTIONS_BY_NAME[name],
         )
+        engine.update_prompts({"pandas_prompt": PROMPTS_BY_NAME[name]})
 
-        csv_query_engine.update_prompts({"pandas_prompt": new_prompt})
-
-        query_engine_tools.append(
+        tools.append(
             QueryEngineTool(
-            query_engine = csv_query_engine,
-            metadata=ToolMetadata(
-                name=name,
-                description=description
+                query_engine=engine,
+                metadata=ToolMetadata(
+                    name=name,
+                    description=f"{name} data for 2024 F1 season",
+                ),
             )
-            )
-        ) 
-    return query_engine_tools
-
+        )
+    return tools
