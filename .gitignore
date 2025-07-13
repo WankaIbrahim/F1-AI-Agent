@@ -1,3 +1,4 @@
 .env
-.vscode 
+.vscode
+.venv 
 aws_credentials/
