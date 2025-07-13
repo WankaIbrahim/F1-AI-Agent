@@ -1,13 +1,11 @@
-tkinter
-ttkbootstrap
 python-dotenv
 pandas
-boto3
-botocore
 llama-index
+llama-index.experimental
+llama-index-core
+llama-index-llms-openai
 openai
 requests
 pathlib
-shutil
 matplotlib
 numpy

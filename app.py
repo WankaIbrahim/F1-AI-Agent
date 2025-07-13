@@ -1,43 +1,14 @@
 import os
 from dotenv import load_dotenv
-import boto3
 import datetime
-from botocore.exceptions import ClientError
 from prompts import context
-from llama_index.core.agent import ReActAgent
+from llama_index.core.agent.workflow import ReActAgent
 from llama_index.llms.openai import OpenAI
-from llama_index.core.tools import RetrieverTool
 
-def get_secret():            
-    secret_name = "OPENAI_API_KEY"
-    region_name = "eu-north-1"
-
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-    except ClientError as e:
-        raise e
-    
-    secret = get_secret_value_response['SecretString'].strip()      
-    return secret
-
-def load_tools():
-    global tools
-    from tools import tools
 
 def login():
     global agent, tools
-    os.environ["AWS_ACCESS_KEY_ID"] = "AKIAYZZGSWXPTI5RURU6"
-    os.environ["AWS_SECRET_ACCESS_KEY"] = "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"
-    os.environ["OPENAI_API_KEY"] = get_secret()
-
-    load_tools()
+    from tools import tools
     
     llm = OpenAI(model="o4-mini")
     agent = ReActAgent.from_tools(

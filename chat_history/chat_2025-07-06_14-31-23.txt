@@ -1,0 +1,2 @@
+QUERY: How many Formula One World Drivers' Championship titles does Max  Verstappen have
+ANSWER: Max Verstappen has won three Formula One World Drivers’ Championship titles.

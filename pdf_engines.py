@@ -1,10 +1,20 @@
 import os
+import shutil
 from LazyQueryEngineTool import LazyQueryEngineTool
 from llama_index.core import StorageContext, VectorStoreIndex, load_index_from_storage
 from llama_index.readers.file import PDFReader
 from pdf_generator import download_pdf_files
 
-download_pdf_files()
+pdfs_changed = download_pdf_files()
+
+if pdfs_changed:
+    indexes_dir = os.path.join("data", "indexes")
+    if os.path.exists(indexes_dir):
+        for folder in os.listdir(indexes_dir):
+            folder_path = os.path.join(indexes_dir, folder)
+            if os.path.isdir(folder_path):
+                shutil.rmtree(folder_path)
+    print("Indexes cleared")
 
 def get_index(data, index_name):
     index_path = os.path.join("data", "indexes", index_name)
@@ -33,7 +43,6 @@ def create_pdf_engines():
             def load_engine():
                 if name in pdf_cache:
                     return pdf_cache[name]
-                
                 print(f"Loading engine for {name}...")
                 pdf_data = PDFReader().load_data(file=path)
                 index = get_index(pdf_data, name)

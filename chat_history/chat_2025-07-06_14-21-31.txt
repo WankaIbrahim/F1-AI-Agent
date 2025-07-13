@@ -1,0 +1,2 @@
+QUERY: HOW MANY titles does max verstappen have
+ANSWER: Max Verstappen has two Formula One World Drivers’ Championship titles (2021 and 2022).

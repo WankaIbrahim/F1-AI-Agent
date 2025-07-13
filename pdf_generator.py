@@ -7,6 +7,7 @@ baseurl = "https://en.wikipedia.org/api/rest_v1/page/pdf/"
 
 
 def download_pdf_files():
+    downloaded = False
     txt_list = []
     for file_name in file_names:
         with open(os.path.join("data", file_name), "r") as txt_file:
@@ -27,4 +28,6 @@ def download_pdf_files():
                 for chunk in response.iter_content(chunk_size=4096):
                     if chunk:
                         pdf_file.write(chunk)
+                        downloaded = True
             print(file_name + " has been downloaded.")
+    return downloaded    

@@ -1,0 +1,8 @@
+QUERY: HOW MANY titles does max verstappen have
+ANSWER: Max Verstappen has won one World Drivers’ Championship.
+QUERY: How many wdc has max verstappen won?
+ANSWER: Max Verstappen has won 3 World Drivers’ Championships (2021, 2022 and 2023).
+QUERY: How many wdc has max verstappen won?
+ANSWER: Max Verstappen has won three World Drivers’ Championships.
+QUERY: How many Formula One World Drivers' Championship titles does Max  Verstappen have
+ANSWER: Max Verstappen has won three Formula One World Drivers’ Championship titles.

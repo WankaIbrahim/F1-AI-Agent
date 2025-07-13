@@ -13,10 +13,6 @@ The F1 AI Agent is a chatbot designed to provide detailed information and insigh
 
 
 
-
-
-
-
 ## Feedback
 
 Contributions to improve the F1 AI Agent are welcome. Please open an issue or submit a pull request. If you have any feedback, please reach out to me at 224wankaibrahim@gmail.com.
@@ -33,7 +29,7 @@ git clone https://github.com/WankaIbrahim/F1-AI-Agent
 Install the requirements
 
 ```bash
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 Run the application
