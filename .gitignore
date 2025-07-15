@@ -2,3 +2,4 @@
 .vscode
 .venv 
 aws_credentials/
+chat_history/
