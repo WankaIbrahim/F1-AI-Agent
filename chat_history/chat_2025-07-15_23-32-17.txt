@@ -1,0 +1,9 @@
+QUERY: Who is lewis hamilton
+ANSWER: Lewis Hamilton is a British Formula One racing driver, currently competing for the Mercedes-AMG Petronas team. He is a seven-time World Drivers’ Champion—tied for the most titles in F1 history—and holds records for the most Grand Prix wins, pole positions and podium finishes. Off the track, Hamilton is known for his work in environmental and social activism, promoting diversity and sustainability in motorsport and beyond.
+QUERY: Who is lando norris
+ANSWER: Lando Norris (born 13 November 1999 in Bristol, England) is a British racing driver who has competed in Formula One for the McLaren team since his debut season in 2019. After a highly successful junior career—winning multiple karting championships and finishing as runner-up in both the 2016 FIA F3 European Championship and the 2017 FIA Formula 3 Championship—he stepped up to F1 as McLaren’s reserve driver before being promoted to a race seat.  
+
+In Formula One Norris has claimed multiple podium finishes, scored his first pole position in 2021, set fastest laps and achieved race victories, establishing himself as one of the sport’s most talented and popular young drivers.
+QUERY: What position did yuki tsunoda finish the british grand prix
+
+ANSWER: Yuki Tsunoda finished in 10th position at the British Grand Prix.

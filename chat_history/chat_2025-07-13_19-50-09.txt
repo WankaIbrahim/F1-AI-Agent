@@ -1,0 +1,2 @@
+QUERY: Who is lando norris
+ANSWER: Lando Norris is a British Formula One racing driver who has competed for McLaren since 2019. As of the 2025 British Grand Prix, he has scored seven Grand Prix victories, claimed 12 pole positions, set 17 fastest laps and stood on the podium 35 times. Before F1, he enjoyed a highly successful karting and junior-formula career.

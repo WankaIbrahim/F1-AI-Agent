@@ -4,48 +4,60 @@ import datetime
 from prompts import context
 from llama_index.core.agent.workflow import ReActAgent
 from llama_index.llms.openai import OpenAI
+from PySide6.QtCore import QObject, Slot, Signal
+import asyncio
+import nest_asyncio
+nest_asyncio.apply()
+
+async def get_response(agent, prompt):
+    response = await agent.run(prompt)
+    print("Agent final response:", response)
+    return response
+
+class ChatBotBackend(QObject):
+    responseReady = Signal(str)
+
+    def __init__(self):
+        super().__init__()
+        self.agent = None
+        self.history_file = None
+        self.init_agent()
+
+    def init_agent(self):
+        load_dotenv()
+        global agent, tools
+        from tools import tools
 
 
-def login():
-    global agent, tools
-    from tools import tools
-    
-    llm = OpenAI(model="o4-mini")
-    agent = ReActAgent.from_tools(
-        llm=llm,
-        tools=tools,
-        verbose=True,
-        context=context,
-    )       
-    return agent
+        llm = OpenAI(model="o4-mini")
+        self.agent = ReActAgent(
+            llm=llm,
+            tools=tools,
+            verbose=True,
+            context=context,
+        )
 
-def main():
-    print("Welcome to the F1 Chatbot!")
-    print("Type your questions and press Enter.")
-    print("Type 'exit' or 'quit' to end the session.\n")
+        start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        if not os.path.exists("chat_history"):
+            os.makedirs("chat_history")
+        self.history_file = os.path.join("chat_history", f"chat_{start_time}.txt")
 
-    agent = login()
-
-    start_time = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    history_file = f"chat_{start_time}.txt"
-
-    def update_chat_history(text: str):
-        with open(os.path.join("chat_history",history_file), "a", encoding="utf-8") as f:
+    def update_chat_history(self, text: str):
+        with open(self.history_file, "a", encoding="utf-8") as f:
             f.write(text + "\n")
 
-        
-    while True:
-        prompt = input("You: ").strip()
-        if prompt.lower() in ('exit', 'quit'):
-            print("Goodbye!")
-            break
+    @Slot(str)
+    def sendQuery(self, prompt: str):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
-        response = agent.query(prompt)
-        print(f"Agent: {response}")
+        if not prompt.strip():
+            self.responseReady.emit("Please enter a question.")
+            return
 
-        update_chat_history(f"QUERY: {prompt}")
-        update_chat_history(f"ANSWER: {response}")
+        response = loop.run_until_complete(get_response(self.agent, prompt))
 
-if __name__ == "__main__":
-    load_dotenv()
-    main()
+        self.update_chat_history(f"QUERY: {prompt}")
+        self.update_chat_history(f"ANSWER: {response}")
+
+        self.responseReady.emit(str(response))

@@ -1,0 +1,2 @@
+QUERY: Who won the 2024 british grand prix
+ANSWER: The 2024 British Grand Prix was won by Lewis Hamilton.

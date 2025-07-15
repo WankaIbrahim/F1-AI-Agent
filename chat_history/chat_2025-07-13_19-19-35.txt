@@ -1,0 +1,3 @@
+QUERY: Who won the 2024 british grand prix
+
+ANSWER: Lewis Hamilton.

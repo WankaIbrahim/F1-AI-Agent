@@ -1,0 +1,2 @@
+QUERY: who is lewis hamilton
+ANSWER: Lewis Hamilton is a British Formula One racing driver who competes for the Mercedes-AMG Petronas Formula One Team. He is a seven-time Formula One World Champion (2008, 2014, 2015, 2017, 2018, 2019 and 2020), tying the all-time record. Widely regarded as one of the greatest drivers in the history of the sport, Hamilton holds numerous records, including most pole positions and, as of 2024, is an outspoken advocate for diversity and environmental causes.

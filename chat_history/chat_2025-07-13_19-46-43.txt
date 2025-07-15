@@ -1,0 +1,3 @@
+QUERY: Who is lewis hamilton
+
+ANSWER: Lewis Hamilton is a British Formula One racing driver. He has won seven World Drivers’ Championship titles—tying the all-time record—and holds numerous F1 records, including most race wins, pole positions and podium finishes. Off the track, Hamilton is also known for his environmental advocacy and social-justice work, making him one of the sport’s most high-profile figures.

@@ -1,0 +1,2 @@
+QUERY: Who is lando norris
+ANSWER: Lando Norris is a British racing driver currently competing in Formula One for the McLaren F1 Team. Born on 13 November 1999 in Bristol, England, he made his F1 debut in 2019 and has scored multiple podium finishes. Known for his speed, consistency and engaging personality both on and off track, Norris is considered one of the sport’s rising stars.
